@@ -11,7 +11,7 @@ public class Bullet {
 	private GraphicsContext gc;
 	
 	private final int SPEED = 10;
-	private static final int SIZE = 15;
+	private static final int SIZE = 10;
 	
 	private int x;
 	private int y;

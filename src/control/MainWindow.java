@@ -31,7 +31,8 @@ public class MainWindow implements Initializable{
 				isEndGame();
 				
 				Platform.runLater(() -> {
-					paint();	
+					paint();
+					paintStars();
 				});
 				
 				pause(50);
@@ -43,6 +44,10 @@ public class MainWindow implements Initializable{
 	
 	private void paint() {
 		screen.paint();
+	}
+	
+	private void paintStars() {
+		screen.paintStars();
 	}
 	
 	private void isEndGame() {
