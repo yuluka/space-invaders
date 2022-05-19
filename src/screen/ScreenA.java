@@ -14,7 +14,7 @@ import model.Enemy;
 
 public class ScreenA {
 	
-	private final int ENEMIES = 5;
+	private final int ENEMIES = 3;
 	
 	private Canvas canvas;
 	private GraphicsContext gc;
@@ -83,13 +83,15 @@ public class ScreenA {
 				Bullet b = bullets.get(j);
 				
 				int eX = e.getX()+(int) (e.getWidth()/2);
-				int bX = b.getX()+(int) (Bullet.getSize()/2); //Para que la distancia se calcule con base en la mitad del enemigo y no de su derecha.
+				int bX = b.getX()+(int) (Bullet.getWidth()/2); //Para que la distancia se calcule con base en la mitad del enemigo y no de su derecha.
 				
 				double distance = Math.sqrt(Math.pow(eX-bX, 2) + 
 						Math.pow(e.getY()-b.getY(), 2));
 				
-				if(distance <= 15) {
+				if(distance <= 15) {					
 					bullets.remove(j);
+					
+					destroyInvader(enemies.get(i));
 					enemies.remove(i);
 					
 					return;
@@ -146,6 +148,23 @@ public class ScreenA {
 		return new double[] {min, max};
 	}
 	
+	public void destroyInvader(Enemy enemy) {
+		new Thread(() -> {
+			int frame = 0;
+			
+			while(frame < 5) {
+				enemy.destroyInvader();
+				
+				frame++;
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+	
 	public void onKey() {
 		if(keyW) {
 			avatar.moveYBy(-5);
@@ -161,8 +180,8 @@ public class ScreenA {
 	}
 	
 	public void shoot() {
-		int bulletX = avatar.getX() + (int)(avatar.getWidth()/2)-(Bullet.getSize()/2);
-		int bulletY = avatar.getY() - (Bullet.getSize());
+		int bulletX = avatar.getX() + (int)(avatar.getWidth()/2)-(int)(Bullet.getWidth()/2);
+		int bulletY = avatar.getY() - (int)(Bullet.getHeight());
 		
 		bullets.add(new Bullet(canvas,bulletX,bulletY));
 	}

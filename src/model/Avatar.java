@@ -28,7 +28,7 @@ public class Avatar {
 	}
 	
 	public void setSkin() {
-		File file = new File("src/images/Nave.png");
+		File file = new File("src/images/Ship.png");
 		
 		try {
 			skin = new Image(new FileInputStream(file));

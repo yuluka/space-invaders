@@ -1,8 +1,12 @@
 package model;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 
 public class Bullet {
 	
@@ -11,25 +15,33 @@ public class Bullet {
 	private GraphicsContext gc;
 	
 	private final int SPEED = 10;
-	private static final int SIZE = 10;
 	
 	private int x;
 	private int y;
-	private int size;
 	private int speed;
+	private static Image skin;
 	
 	public Bullet(Canvas canvas, int x, int y) {
 		this.canvas = canvas;
 		this.gc = canvas.getGraphicsContext2D();
 		this.x = x;
 		this.y = y;
-		this.size = SIZE;
 		this.speed = SPEED;
+		
+		setSkin();
+	}
+	
+	public static void setSkin() {
+		File file = new File("src/images/Bullet.png");
+		try {
+			skin = new Image(new FileInputStream(file));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void paint() {
-		gc.setFill(Color.WHITE);
-		gc.fillOval(x, y, size, size);
+		gc.drawImage(skin, x, y);
 		y -= speed;
 	}
 
@@ -49,7 +61,15 @@ public class Bullet {
 		this.y = y;
 	}
 	
-	public static int getSize() {
-		return SIZE;
+	public static double getWidth() {
+		setSkin();
+		
+		return skin.getWidth();
+	}
+	
+	public static double getHeight() {
+		setSkin();
+		
+		return skin.getHeight();
 	}
 }
