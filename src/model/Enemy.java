@@ -19,7 +19,7 @@ public class Enemy extends Thread {
 	
 	private int x,y;
 	
-	private Image skin;
+	private static Image skin;
 	private ArrayList<Image> explosionSprites;
 	
 	private boolean isAlive = true;
@@ -36,7 +36,7 @@ public class Enemy extends Thread {
 		setSprites();
 	}
 	
-	public void setSkin() {
+	public static void setSkin() {
 		File file = new File("src/images/Invader.png");		
 		
 		try {
@@ -62,26 +62,27 @@ public class Enemy extends Thread {
 	}
 	
 	public void destroyInvader() {
-			gc.drawImage(explosionSprites.get(frame%5), x, y);
-			frame++;
+		gc.drawImage(explosionSprites.get(frame%5), x, y);
+		frame++;
 	}
 	
 	@Override
 	public void run() {
-		int counter = 1;
+		int xMove = ENEMY_MOVEMENT;
 		
 		while(isAlive) {
-			int xMove;
+			int position = x + (int)getWidth();
 			
-			if(counter %2 == 0) {
-				xMove = -ENEMY_MOVEMENT;
-			} else {
-				xMove = ENEMY_MOVEMENT;
+			if(position >= canvas.getWidth()) {
+				y += getHeight();
+				xMove *= -1;
+				
+			} else if(x <= 0) {
+				y += getHeight();
+				xMove *= -1;
 			}
 			
 			x += xMove;
-			
-			counter++;
 			
 			try {
 				Thread.sleep(700);
@@ -107,8 +108,16 @@ public class Enemy extends Thread {
 		this.y = y;
 	}	
 	
-	public double getWidth() {
+	public static double getWidth() {
+		setSkin();
+		
 		return skin.getWidth();
+	}
+	
+	public static double getHeight() {
+		setSkin();
+		
+		return skin.getHeight();
 	}
 
 	public void setAlive(boolean isAlive) {

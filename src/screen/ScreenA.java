@@ -3,6 +3,7 @@ package screen;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
@@ -14,7 +15,8 @@ import model.Enemy;
 
 public class ScreenA {
 	
-	private final int ENEMIES = 3;
+	private final int ENEMIES = 6;
+	private final int LINES = 3;
 	
 	private Canvas canvas;
 	private GraphicsContext gc;
@@ -41,10 +43,22 @@ public class ScreenA {
 	}
 	
 	public void createEnemies() {
+		int lineEnemies = ENEMIES/LINES;
+		
+		int y = 25;
+		double separation = Enemy.getWidth();
+		int x = 25;
+		
 		for (int i = 0; i < ENEMIES; i++) {
-			int x = (int) (canvas.getWidth()/ENEMIES) + 20;
+
+			if(enemies.size() != 0 && (enemies.size()) %lineEnemies == 0) {
+				y += Enemy.getHeight();
+				x = 25;
+			}
 			
-			enemies.add(new Enemy(canvas,x*i,100));
+			enemies.add(new Enemy(canvas,x,y));
+			
+			x += separation+Enemy.getWidth()/2;
 		}
 		
 		startAutomatas();
@@ -60,8 +74,6 @@ public class ScreenA {
 		gc.setFill(Color.BLACK);
 		gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
 		
-		avatar.paint();
-		
 		for (int i = 0; i < bullets.size(); i++) {
 			bullets.get(i).paint();
 			
@@ -75,6 +87,16 @@ public class ScreenA {
 			enemies.get(i).paint();
 		}
 		
+		
+		if(avatar != null) {
+			avatar.paint();	
+			enemyPlayerDistance();
+		}
+		
+		enemyBulletDistance();
+	}
+	
+	public void enemyBulletDistance() {
 		//Calcular distancia
 		for (int i = 0; i < enemies.size(); i++) {
 			for (int j = 0; j < bullets.size(); j++) {
@@ -82,7 +104,7 @@ public class ScreenA {
 				Enemy e = enemies.get(i);
 				Bullet b = bullets.get(j);
 				
-				int eX = e.getX()+(int) (e.getWidth()/2);
+				int eX = e.getX()+(int) (Enemy.getWidth()/2);
 				int bX = b.getX()+(int) (Bullet.getWidth()/2); //Para que la distancia se calcule con base en la mitad del enemigo y no de su derecha.
 				
 				double distance = Math.sqrt(Math.pow(eX-bX, 2) + 
@@ -91,13 +113,76 @@ public class ScreenA {
 				if(distance <= 15) {					
 					bullets.remove(j);
 					
-					destroyInvader(enemies.get(i));
-					enemies.remove(i);
+					destroyInvader(enemies.remove(i));
 					
 					return;
 				}
 			}
 		}
+	}
+	
+	public void enemyPlayerDistance() {
+		for (int i = 0; i < enemies.size(); i++) {
+			Enemy e = enemies.get(i);
+			
+			int eX = e.getX()+(int) (Enemy.getWidth()/2);
+			int pX = avatar.getX()+(int) (avatar.getWidth()/2);
+			
+			double distance = Math.sqrt(Math.pow(eX-pX, 2) + 
+					Math.pow(e.getY()-avatar.getY(), 2));
+			
+			if(distance <= 25) {
+				destroyInvader(enemies.remove(i));
+				destroyAvatar();
+				
+				return;
+			}
+		}
+	}
+	
+	public void destroyInvader(Enemy enemy) {
+		new Thread(() -> {
+			int frame = 0;
+			
+			while(frame < 5) {
+				Platform.runLater(() -> {
+					enemy.destroyInvader();
+				});
+				
+				frame++;
+				
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+	
+	public void destroyAvatar() {
+		Avatar avatarAux = avatar;
+		
+		new Thread(() -> {
+			int frame = 0;
+			
+			while(frame < 5) {
+				Platform.runLater(() -> {
+					avatarAux.destroyPlayer();
+				});
+				
+				frame++;
+				
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).start();
+		
+		avatar = null;
 	}
 	
 	public void paintStars() {
@@ -146,23 +231,6 @@ public class ScreenA {
 		double min = aux.get(0);
 		double max = aux.get(aux.size()-1);
 		return new double[] {min, max};
-	}
-	
-	public void destroyInvader(Enemy enemy) {
-		new Thread(() -> {
-			int frame = 0;
-			
-			while(frame < 5) {
-				enemy.destroyInvader();
-				
-				frame++;
-				try {
-					Thread.sleep(50);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}).start();
 	}
 	
 	public void onKey() {
@@ -220,6 +288,8 @@ public class ScreenA {
 	
 	public boolean isEndGame() {
 		if(enemies.size() == 0) {
+			return true;
+		} else if(avatar == null) {
 			return true;
 		} else {
 			return false;
