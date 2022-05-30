@@ -13,11 +13,11 @@ public class Enemy extends Thread {
 
 	private final int ENEMY_MOVEMENT = 10;
 	
-	@SuppressWarnings("unused")
 	private Canvas canvas;
 	private GraphicsContext gc;
 	
 	private int x,y;
+	private ArrayList<Bullet> bullets;
 	
 	private static Image skin;
 	private ArrayList<Image> explosionSprites;
@@ -31,6 +31,7 @@ public class Enemy extends Thread {
 		this.x = x;
 		this.y = y;
 		this.explosionSprites = new ArrayList<Image>();
+		this.bullets = new ArrayList<Bullet>();
 		
 		setSkin();
 		setSprites();
@@ -72,14 +73,17 @@ public class Enemy extends Thread {
 		
 		while(isAlive) {
 			int position = x + (int)getWidth();
-			
-			if(position >= canvas.getWidth()) {
+		
+			if(position >= canvas.getWidth()-ENEMY_MOVEMENT) {
 				y += getHeight();
+				x = (int)(canvas.getWidth()-5)-(int)getWidth();
 				xMove *= -1;
 				
 			} else if(x <= 0) {
 				y += getHeight();
+				x = 5;
 				xMove *= -1;
+				
 			}
 			
 			x += xMove;
@@ -90,6 +94,15 @@ public class Enemy extends Thread {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public void shoot() {
+		int bulletX = x + (int) (getWidth()/2)-(int)(Bullet.getWidth()/2);
+		int bulletY = y + (int)(Bullet.getHeight());
+		
+		Bullet bullet = new Bullet(canvas,bulletX,bulletY);
+		
+		bullets.add(bullet);
 	}
 
 	public int getX() {
@@ -106,7 +119,11 @@ public class Enemy extends Thread {
 
 	public void setY(int y) {
 		this.y = y;
-	}	
+	}
+	
+	public void addY(int y) {
+		this.y += y;
+	}
 	
 	public static double getWidth() {
 		setSkin();
@@ -122,5 +139,9 @@ public class Enemy extends Thread {
 
 	public void setAlive(boolean isAlive) {
 		this.isAlive = isAlive;
+	}
+	
+	public ArrayList<Bullet> getBullets() {
+		return bullets;
 	}
 }

@@ -2,6 +2,7 @@ package screen;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
@@ -15,15 +16,15 @@ import model.Enemy;
 
 public class ScreenA {
 	
-	private final int ENEMIES = 6;
-	private final int LINES = 3;
+	private final static int ENEMIES = 10;
+	private final int LINES = 1;
 	
 	private Canvas canvas;
 	private GraphicsContext gc;
 	
 	private Avatar avatar;
 	private ArrayList<Bullet> bullets;
-	private ArrayList<Enemy> enemies;
+	private static ArrayList<Enemy> enemies;
 	
 	private boolean keyW = false;
 	private boolean keyA = false;
@@ -85,12 +86,16 @@ public class ScreenA {
 		
 		for (int i = 0; i < enemies.size(); i++) {
 			enemies.get(i).paint();
+			
+			for (int j = 0; j < enemies.get(i).getBullets().size(); j++) {
+				enemies.get(i).getBullets().get(j).paintForEnemy();
+			}
 		}
-		
 		
 		if(avatar != null) {
 			avatar.paint();	
 			enemyPlayerDistance();
+			playerBulletDistance();
 		}
 		
 		enemyBulletDistance();
@@ -114,6 +119,30 @@ public class ScreenA {
 					bullets.remove(j);
 					
 					destroyInvader(enemies.remove(i));
+					
+					return;
+				}
+			}
+		}
+	}
+	
+	public void playerBulletDistance() {
+		for (int i = 0; i < enemies.size(); i++) {
+			Enemy enemy = enemies.get(i);
+			
+			for (int j = 0; j < enemy.getBullets().size(); j++) {
+				Bullet bullet = enemy.getBullets().get(j);
+				
+				int bX = bullet.getX() + (int)(Bullet.getWidth()/2);
+				int pX = avatar.getX() + (int)(avatar.getWidth()/2);
+				
+				double distance = Math.sqrt(Math.pow(bX-pX, 2) +
+						Math.pow(avatar.getY()-bullet.getY(), 2));
+				
+				if(distance <= 30) {
+					enemy.getBullets().remove(j);
+					
+					destroyAvatar();
 					
 					return;
 				}
@@ -176,7 +205,6 @@ public class ScreenA {
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -254,6 +282,14 @@ public class ScreenA {
 		bullets.add(new Bullet(canvas,bulletX,bulletY));
 	}
 	
+	public void invaderShoot() {
+		Random random = new Random();
+		
+		int index = random.nextInt(enemies.size());
+		
+		enemies.get(index).shoot();
+	}
+	
 	public void onKeyPressed(KeyEvent e) {
 		if(e.getCode().equals(KeyCode.A)) {
 			keyA = true;
@@ -291,8 +327,18 @@ public class ScreenA {
 			return true;
 		} else if(avatar == null) {
 			return true;
+		} else if(enemies.get(0).getY() > canvas.getHeight()) {
+			return true;
 		} else {
 			return false;
 		}
+	}
+	
+	public static ArrayList<Enemy> getEnemies() {
+		return enemies;
+	}
+	
+	public static int getNumEnemies() {
+		return ENEMIES;
 	}
 }

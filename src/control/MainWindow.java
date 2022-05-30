@@ -40,6 +40,7 @@ public class MainWindow implements Initializable{
 		}).start();
 		
 		initEvents();
+		enemyShoot();
 	}
 	
 	private void paint() {
@@ -64,6 +65,20 @@ public class MainWindow implements Initializable{
 		CANVAS.setOnKeyReleased(e -> {
 			screen.onKeyReleased(e);
 		});
+	}
+	
+	public void enemyShoot() {
+		new Thread(() -> {
+			while(true) {
+				screen.invaderShoot();
+				
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
 	}
 
 	private void pause(int time) {

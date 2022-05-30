@@ -20,6 +20,7 @@ public class Bullet {
 	private int y;
 	private int speed;
 	private static Image skin;
+	private static Image skinForEnemy;
 	
 	public Bullet(Canvas canvas, int x, int y) {
 		this.canvas = canvas;
@@ -28,13 +29,17 @@ public class Bullet {
 		this.y = y;
 		this.speed = SPEED;
 		
-		setSkin();
+		setSkins();
 	}
 	
-	public static void setSkin() {
+	public static void setSkins() {
 		File file = new File("src/images/Bullet.png");
+		File file2 = new File("src/images/Bullet invader 2.png");
+		
 		try {
 			skin = new Image(new FileInputStream(file));
+			skinForEnemy = new Image(new FileInputStream(file2));
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -43,6 +48,11 @@ public class Bullet {
 	public void paint() {
 		gc.drawImage(skin, x, y);
 		y -= speed;
+	}
+	
+	public void paintForEnemy() {
+		gc.drawImage(skinForEnemy, x, y);
+		y += speed;
 	}
 
 	public int getX() {
@@ -62,13 +72,13 @@ public class Bullet {
 	}
 	
 	public static double getWidth() {
-		setSkin();
+		setSkins();
 		
 		return skin.getWidth();
 	}
 	
 	public static double getHeight() {
-		setSkin();
+		setSkins();
 		
 		return skin.getHeight();
 	}
