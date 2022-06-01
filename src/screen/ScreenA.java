@@ -1,5 +1,6 @@
 package screen;
 
+import java.applet.AudioClip;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -23,6 +24,10 @@ public class ScreenA {
 	private GraphicsContext gc;
 	
 	private Avatar avatar;
+	private AudioClip shootSound;
+	private AudioClip gameOverSound;
+	private AudioClip explosionSound;
+	
 	private ArrayList<Bullet> bullets;
 	private static ArrayList<Enemy> enemies;
 	
@@ -41,6 +46,10 @@ public class ScreenA {
 		enemies = new ArrayList<Enemy>();
 		
 		createEnemies();
+		
+		shootSound = java.applet.Applet.newAudioClip(getClass().getResource("/sounds/Pew.wav"));
+		explosionSound = java.applet.Applet.newAudioClip(getClass().getResource("/sounds/Pew.wav"));
+		gameOverSound = java.applet.Applet.newAudioClip(getClass().getResource("/sounds/Game over.wav"));
 	}
 	
 	public void createEnemies() {
@@ -272,6 +281,7 @@ public class ScreenA {
 			avatar.moveXBy(5);
 		} if(keySpace) {
 			shoot();
+			shootSound.play();
 		}
 	}
 	
@@ -324,10 +334,13 @@ public class ScreenA {
 	
 	public boolean isEndGame() {
 		if(enemies.size() == 0) {
+			gameOverSound.play();
 			return true;
 		} else if(avatar == null) {
+			gameOverSound.play();
 			return true;
 		} else if(enemies.get(0).getY() > canvas.getHeight()) {
+			gameOverSound.play();
 			return true;
 		} else {
 			return false;
