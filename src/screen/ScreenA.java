@@ -25,8 +25,10 @@ public class ScreenA {
 	
 	private Avatar avatar;
 	private AudioClip shootSound;
-	private AudioClip gameOverSound;
+	private static AudioClip gameOverSound;
 	private AudioClip explosionSound;
+	
+	private static int score = 0;
 	
 	private ArrayList<Bullet> bullets;
 	private static ArrayList<Enemy> enemies;
@@ -40,6 +42,7 @@ public class ScreenA {
 	public ScreenA(Canvas canvas) {
 		this.canvas = canvas;
 		this.gc = canvas.getGraphicsContext2D();
+		score = 0;
 		
 		avatar = new Avatar(canvas);
 		bullets = new ArrayList<Bullet>();
@@ -140,21 +143,26 @@ public class ScreenA {
 			Enemy enemy = enemies.get(i);
 			
 			for (int j = 0; j < enemy.getBullets().size(); j++) {
-				Bullet bullet = enemy.getBullets().get(j);
-				
-				int bX = bullet.getX() + (int)(Bullet.getWidth()/2);
-				int pX = avatar.getX() + (int)(avatar.getWidth()/2);
-				
-				double distance = Math.sqrt(Math.pow(bX-pX, 2) +
-						Math.pow(avatar.getY()-bullet.getY(), 2));
-				
-				if(distance <= 30) {
-					enemy.getBullets().remove(j);
+				if(avatar != null) {
+					Bullet bullet = enemy.getBullets().get(j);
 					
-					destroyAvatar();
+					int bX = bullet.getX() + (int)(Bullet.getWidth()/2);
+					int pX = avatar.getX() + (int)(avatar.getWidth()/2);
 					
-					return;
-				}
+					double distance = Math.sqrt(Math.pow(bX-pX, 2) +
+							Math.pow(avatar.getY()-bullet.getY(), 2));
+					
+					if(distance <= 30) {
+						enemy.getBullets().remove(j);
+						
+						destroyAvatar();
+						
+						return;
+					}
+				} else {
+					j = enemy.getBullets().size();
+					i = enemies.size();
+				}	
 			}
 		}
 	}
@@ -196,6 +204,10 @@ public class ScreenA {
 				}
 			}
 		}).start();
+		
+		score += 10;
+		
+		//explosionSound.play();
 	}
 	
 	public void destroyAvatar() {
@@ -220,6 +232,7 @@ public class ScreenA {
 		}).start();
 		
 		avatar = null;
+		//explosionSound.play();
 	}
 	
 	public void paintStars() {
@@ -271,17 +284,19 @@ public class ScreenA {
 	}
 	
 	public void onKey() {
-		if(keyW) {
-			avatar.moveYBy(-5);
-		} if(keyA) {
-			avatar.moveXBy(-5);
-		} if(keyS) {
-			avatar.moveYBy(5);
-		} if(keyD) {
-			avatar.moveXBy(5);
-		} if(keySpace) {
-			shoot();
-			shootSound.play();
+		if(avatar != null) {
+			if(keyW) {
+				avatar.moveYBy(-5);
+			} if(keyA) {
+				avatar.moveXBy(-5);
+			} if(keyS) {
+				avatar.moveYBy(5);
+			} if(keyD) {
+				avatar.moveXBy(5);
+			} if(keySpace) {
+				shoot();
+				shootSound.play();
+			}
 		}
 	}
 	
@@ -334,13 +349,10 @@ public class ScreenA {
 	
 	public boolean isEndGame() {
 		if(enemies.size() == 0) {
-			gameOverSound.play();
 			return true;
 		} else if(avatar == null) {
-			gameOverSound.play();
 			return true;
 		} else if(enemies.get(0).getY() > canvas.getHeight()) {
-			gameOverSound.play();
 			return true;
 		} else {
 			return false;
@@ -351,7 +363,15 @@ public class ScreenA {
 		return enemies;
 	}
 	
+	public static AudioClip getGameOverSound() {
+		return gameOverSound;
+	}
+	
 	public static int getNumEnemies() {
 		return ENEMIES;
+	}
+	
+	public static int getScore() {
+		return score;
 	}
 }

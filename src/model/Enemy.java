@@ -38,7 +38,7 @@ public class Enemy extends Thread {
 	}
 	
 	public static void setSkin() {
-		File file = new File("src/images/Invader.png");		
+		File file = new File("src/images/Invader 2.png");		
 		
 		try {
 			skin = new Image(new FileInputStream(file));
