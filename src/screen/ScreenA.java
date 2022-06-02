@@ -35,10 +35,10 @@ public class ScreenA {
 	private ArrayList<Bullet> bullets;
 	private static ArrayList<Enemy> enemies;
 	
-	private boolean keyW = false;
-	private boolean keyA = false;
-	private boolean keyS = false;
-	private boolean keyD = false;
+	private boolean keyUp = false;
+	private boolean keyLeft = false;
+	private boolean keyDown = false;
+	private boolean keyRight = false;
 	private boolean keySpace = false;
 	
 	public ScreenA(Canvas canvas) {
@@ -286,22 +286,22 @@ public class ScreenA {
 	
 	public void onKey() {
 		if(avatar != null) {
-			if(keyW) {
+			if(keyUp) {
 				if(avatar.getY() >= 0) {
 					avatar.moveYBy(-5);	
 				}
 
-			} if(keyA) {
+			} if(keyLeft) {
 				if(avatar.getX() >= 0) {
 					avatar.moveXBy(-5);
 				}		
 
-			} if(keyS) {
+			} if(keyDown) {
 				if(avatar.getY()+avatar.getHeight() <= canvas.getHeight()) {
 					avatar.moveYBy(5);
 				}
 
-			} if(keyD) {
+			} if(keyRight) {
 				if(avatar.getX()+avatar.getWidth() <= canvas.getWidth()) {
 					avatar.moveXBy(5);
 				}
@@ -330,13 +330,21 @@ public class ScreenA {
 	
 	public void onKeyPressed(KeyEvent e) {
 		if(e.getCode().equals(KeyCode.A)) {
-			keyA = true;
+			keyLeft = true;
+		} if(e.getCode().equals(KeyCode.LEFT)) {
+			keyLeft = true;
 		} if(e.getCode().equals(KeyCode.W)) {
-			keyW = true;
+			keyUp = true;
+		} if(e.getCode().equals(KeyCode.UP)) {
+			keyUp = true;
 		} if(e.getCode().equals(KeyCode.S)) {
-			keyS = true;	
+			keyDown = true;	
+		} if(e.getCode().equals(KeyCode.DOWN)) {
+			keyDown = true;	
 		} if(e.getCode().equals(KeyCode.D)) {
-			keyD = true;
+			keyRight = true;
+		} if(e.getCode().equals(KeyCode.RIGHT)) {
+			keyRight = true;
 		} if(e.getCode().equals(KeyCode.SPACE)) {
 			keySpace = true;
 		}
@@ -346,14 +354,22 @@ public class ScreenA {
 	
 	public void onKeyReleased(KeyEvent e) {
 		if(e.getCode().equals(KeyCode.W)) {
-			keyW = false;
-		} else if(e.getCode().equals(KeyCode.A)) {
-			keyA = false;			
-		} else if(e.getCode().equals(KeyCode.S)) {
-			keyS = false;
-		} else if(e.getCode().equals(KeyCode.D)) {
-			keyD = false;
-		} else if(e.getCode().equals(KeyCode.SPACE)) {
+			keyUp = false;
+		} if(e.getCode().equals(KeyCode.UP)) {
+			keyUp = false;
+		} if(e.getCode().equals(KeyCode.A)) {
+			keyLeft = false;			
+		} if(e.getCode().equals(KeyCode.LEFT)) {
+			keyLeft = false;			
+		} if(e.getCode().equals(KeyCode.S)) {
+			keyDown = false;
+		} if(e.getCode().equals(KeyCode.DOWN)) {
+			keyDown = false;
+		} if(e.getCode().equals(KeyCode.D)) {
+			keyRight = false;
+		} if(e.getCode().equals(KeyCode.RIGHT)) {
+			keyRight = false;
+		} if(e.getCode().equals(KeyCode.SPACE)) {
 			keySpace = false;
 		}
 		
