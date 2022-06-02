@@ -1,5 +1,6 @@
 package control;
 
+import java.applet.AudioClip;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -30,10 +31,14 @@ public class MainWindow implements Initializable{
     private ScreenA screen;
     private boolean isAlive = true;
     private double crono;
+    
+    private AudioClip beginingSound = java.applet.Applet.newAudioClip(getClass().getResource("/sounds/Begining.wav"));
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		screen = new ScreenA(CANVAS);
+		
+		beginingSound.play();		
 		
 		gc = CANVAS.getGraphicsContext2D();
 		CANVAS.setFocusTraversable(true);
@@ -110,8 +115,8 @@ public class MainWindow implements Initializable{
 				crono += 0.1;
 				
 				if(crono == 0.2) {
-					System.out.println("Aiós");
 					isAlive = false;
+					ScreenA.stopAutomatas();
 					
 					Platform.runLater(() -> {
 						goToGameOver();

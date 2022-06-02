@@ -10,6 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -18,6 +19,9 @@ import screen.ScreenA;
 public class GameOverWindow implements Initializable {
     @FXML
     private ImageView BTTN_RETRY;
+    
+    @FXML
+    private ImageView IMG_FINAL_RESULT;
     
     @FXML
     private Label LBL_SCORE;
@@ -38,6 +42,11 @@ public class GameOverWindow implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ScreenA.getGameOverSound().play();
+		
+		if(ScreenA.getScore() == (ScreenA.getNumEnemies()*ScreenA.getScorePerEnemy())) {
+			IMG_FINAL_RESULT.setImage(new Image("/images/You win.png"));
+		}
+		
 		LBL_SCORE.setText(ScreenA.getScore() + "");
 	}
 }

@@ -96,4 +96,8 @@ public class Avatar {
 	public double getWidth() {
 		return skin.getWidth();
 	}
+	
+	public double getHeight() {
+		return skin.getHeight();
+	}
 }

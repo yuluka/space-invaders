@@ -18,14 +18,16 @@ import model.Enemy;
 public class ScreenA {
 	
 	private final static int ENEMIES = 10;
+	private final static int SCORE_PER_ENEMY = 10;
 	private final int LINES = 1;
 	
 	private Canvas canvas;
 	private GraphicsContext gc;
 	
 	private Avatar avatar;
-	private AudioClip shootSound;
+	
 	private static AudioClip gameOverSound;
+	private AudioClip shootSound;
 	private AudioClip explosionSound;
 	
 	private static int score = 0;
@@ -50,8 +52,8 @@ public class ScreenA {
 		
 		createEnemies();
 		
-		shootSound = java.applet.Applet.newAudioClip(getClass().getResource("/sounds/Pew.wav"));
-		explosionSound = java.applet.Applet.newAudioClip(getClass().getResource("/sounds/Pew.wav"));
+		shootSound = java.applet.Applet.newAudioClip(getClass().getResource("/sounds/Shoot.wav"));
+		explosionSound = java.applet.Applet.newAudioClip(getClass().getResource("/sounds/Killed enemy.wav"));
 		gameOverSound = java.applet.Applet.newAudioClip(getClass().getResource("/sounds/Game over.wav"));
 	}
 	
@@ -205,9 +207,9 @@ public class ScreenA {
 			}
 		}).start();
 		
-		score += 10;
+		score += SCORE_PER_ENEMY;
 		
-		//explosionSound.play();
+		explosionSound.play();
 	}
 	
 	public void destroyAvatar() {
@@ -232,7 +234,6 @@ public class ScreenA {
 		}).start();
 		
 		avatar = null;
-		//explosionSound.play();
 	}
 	
 	public void paintStars() {
@@ -286,13 +287,25 @@ public class ScreenA {
 	public void onKey() {
 		if(avatar != null) {
 			if(keyW) {
-				avatar.moveYBy(-5);
+				if(avatar.getY() >= 0) {
+					avatar.moveYBy(-5);	
+				}
+
 			} if(keyA) {
-				avatar.moveXBy(-5);
+				if(avatar.getX() >= 0) {
+					avatar.moveXBy(-5);
+				}		
+
 			} if(keyS) {
-				avatar.moveYBy(5);
+				if(avatar.getY()+avatar.getHeight() <= canvas.getHeight()) {
+					avatar.moveYBy(5);
+				}
+
 			} if(keyD) {
-				avatar.moveXBy(5);
+				if(avatar.getX()+avatar.getWidth() <= canvas.getWidth()) {
+					avatar.moveXBy(5);
+				}
+				
 			} if(keySpace) {
 				shoot();
 				shootSound.play();
@@ -371,7 +384,15 @@ public class ScreenA {
 		return ENEMIES;
 	}
 	
+	public static int getScorePerEnemy() {
+		return SCORE_PER_ENEMY;
+	}
+	
 	public static int getScore() {
 		return score;
+	}
+	
+	public static void stopAutomatas() {
+		Enemy.setAlive(false);
 	}
 }

@@ -22,7 +22,7 @@ public class Enemy extends Thread {
 	private static Image skin;
 	private ArrayList<Image> explosionSprites;
 	
-	private boolean isAlive = true;
+	private static boolean isAlive = true;
 	private int frame = 0;
 	
 	public Enemy(Canvas canvas, int x, int y) {
@@ -70,6 +70,7 @@ public class Enemy extends Thread {
 	@Override
 	public void run() {
 		int xMove = ENEMY_MOVEMENT;
+		isAlive = true;
 		
 		while(isAlive) {
 			int position = x + (int)getWidth();
@@ -137,8 +138,8 @@ public class Enemy extends Thread {
 		return skin.getHeight();
 	}
 
-	public void setAlive(boolean isAlive) {
-		this.isAlive = isAlive;
+	public static void setAlive(boolean aux) {
+		isAlive = aux;
 	}
 	
 	public ArrayList<Bullet> getBullets() {
